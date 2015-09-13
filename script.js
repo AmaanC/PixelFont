@@ -1,5 +1,5 @@
-(function () {
-    var letters = letters = {
+(function() {
+    var letters = {
         'A': [
             [, 1],
             [1, , 1],
@@ -190,11 +190,74 @@
             [1, 1, 1]
         ],
         '1': [
-            [, 1],
-            [, 1],
-            [, 1],
-            [, 1],
-            [, 1]
+            [1],
+            [1],
+            [1],
+            [1],
+            [1]
+        ],
+        '2': [
+            [1,1,1],
+            [,,1],
+            [1,1,1],
+            [1,,],
+            [1,1,1]
+        ],
+        '3': [
+            [1,1,1],
+            [,,1],
+            [,1,1],
+            [,,1],
+            [1,1,1]
+        ],
+        '4': [
+            [1,,1,],
+            [1,,1,],
+            [1,1,1,1],
+            [,,1,],
+            [,,1,],
+        ],
+        '5': [
+            [1,1,1],
+            [1,,,],
+            [1,1,1,],
+            [,,1],
+            [1,1,1],
+        ],
+        '6': [
+            [1,1,1],
+            [1,,,],
+            [1,1,1,],
+            [1,,1],
+            [1,1,1],
+        ],
+        '7': [
+            [1,1,1],
+            [,,1],
+            [,,1],
+            [,,1],
+            [,,1],
+        ],
+        '8': [
+            [1,1,1],
+            [1,,1],
+            [1,1,1],
+            [1,,1],
+            [1,1,1],
+        ],
+        '9': [
+            [1,1,1],
+            [1,,1],
+            [1,1,1],
+            [,,1],
+            [1,1,1],
+        ],
+        '-': [
+            [],
+            [],
+            [1,1],
+            [],
+            [],
         ],
         ' ': [
             [, ,],
@@ -202,23 +265,44 @@
             [, ,],
             [, ,],
             [, ,]
+        ],
+        ':': [
+            [, ,],
+            [, 1,],
+            [, ,],
+            [, ,],
+            [, 1,]
+        ],
+        '@': [
+            [0,1,1,],
+            [1,0,0,1],
+            [1,0,1,1],
+            [1,0,1,1],
+            [1,,],
+            [1,1,1,1],
+        ],
+        // This won't draw "#"! It draws the music symbol.
+        '#': [
+            [,1,1,1,1],
+            [,1,,,1],
+            [,1,,,1],
+            [1,1,,1,1],
+            [1,1,,1,1],
+        ],
+        '!': [
+            [,1],
+            [,1],
+            [,1],
+            [,],
+            [,1],
         ]
     };
+    
+    var ctx = exports.ctx;
+    var canvas = exports.canvas;
 
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-
-    var input = document.getElementById('input');
-
-    input.addEventListener('change', function() {
-        var size = 1000 / (input.value.length * 4.8);
-        size -= size % 4;
-        draw(input.value, Math.min(24, size));
-    });
-
-    function draw(string, size) {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
+    exports.write = function(string, xPos, yPos, size, color) {
+        size = Math.floor(size * exports.ratio);
         var needed = [];
         string = string.toUpperCase(); // because I only did uppercase letters
         for (var i = 0; i < string.length; i++) {
@@ -228,17 +312,37 @@
             }
         }
 
-        context.fillStyle = 'black';
-        var currX = 0;
+        ctx.fillStyle = color || 'black';
+        var currX = xPos;
+        var totalLen;
+        var totalWidth;
+        var currWidths;
+        if (xPos === 'center') {
+            totalWidth = 0;
+            for (var i = 0; i < needed.length; i++) {
+                letter = needed[i];
+                currWidths = letter.map(function(elem) {
+                    return elem.length;
+                });
+                totalWidth += Math.max.apply(undefined, currWidths);
+            }
+            totalLen = totalWidth * size + (needed.length - 1) * size;
+            // The above is basically = sizeof(all characters) + sizeof(spaces between characters)
+            currX = Math.floor(exports.cx - totalLen / 2);
+        }
+        if (yPos === 'center') {
+            totalLen = letter.length * size;
+            yPos = Math.floor(exports.cy - totalLen / 2);
+        }
         for (i = 0; i < needed.length; i++) {
             letter = needed[i];
-            var currY = 0;
+            var currY = yPos;
             var addX = 0;
             for (var y = 0; y < letter.length; y++) {
                 var row = letter[y];
                 for (var x = 0; x < row.length; x++) {
                     if (row[x]) {
-                        context.fillRect(currX + x * size, currY, size, size);
+                        ctx.fillRect(currX + x * size, currY, size, size);
                     }
                 }
                 addX = Math.max(addX, row.length * size);
@@ -246,10 +350,5 @@
             }
             currX += size + addX;
         }
-
-        console.log('Drew ' + string + ' at ' + size);
-    }
-
-    draw('Pixel Font', 24);
-
-})();
+    };
+})(window.game);
