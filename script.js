@@ -307,12 +307,11 @@
     update.addEventListener('click', function() {
         var size = 1000 / (input.value.length * 4.8);
         size -= size % 4;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         exports.write(input.value, 0, 0, Math.min(24, size), 'black');
     });
 
     exports.write = function(string, xPos, yPos, size, color) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
         var needed = [];
         string = string.toUpperCase(); // because I only did uppercase letters
         for (var i = 0; i < string.length; i++) {
@@ -352,7 +351,6 @@
                 var row = letter[y];
                 for (var x = 0; x < row.length; x++) {
                     if (row[x]) {
-                        console.log(currX + x * size, currY, size, size);
                         ctx.fillRect(currX + x * size, currY, size, size);
                     }
                 }
