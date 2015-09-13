@@ -1,5 +1,15 @@
 I'm currently in the middle of creating my entry for [js13kGames](http://2015.js13kgames.com/). js13kGames is a contest, where the rules are that you create a game using JavaScript and Canvas, while keeping it under 13 kilobytes. This includes all assets as well. While we are supposed to zip our entry, this is a huge limit. For example, here's a comparison between a few popular libraries:
 
+##Usage
+
+Include the `text.min.js` file after `window.ctx` has been defined to be a valid canvas context. After that, you can use it like this:
+
+    window.write('aaa', 0, 0, 10, 'red');
+    window.ctx.clearRect(0, 0, 200, 100); // You will have to manually clear the canvas
+    window.write('42', 0, 0, 10, 'green');
+
+##Other Info
+
 ![Size of libraries vs js13kGames](/content/images/blank-2.png)
 
 EaselJS and melonjs are both 2D frameworks for making games in Canvas. They're both far larger than 13KB, and there's no way I can fit them into my game.
